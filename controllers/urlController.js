@@ -42,7 +42,6 @@ async function shortenUrl(req, res) {
 
   } catch (error) {
     res.status(500);
-    console.log(error);
     res.json({
       message: error.errmsg
     })
@@ -61,7 +60,6 @@ async function redirectUrl(req, res) {
     if (url) {
       url.clicks += 1;
       await url.save();
-      console.log(url.clicks);
       return res.redirect(url.longUrl);
     } else {
       res.status(404).json('URL not found');
