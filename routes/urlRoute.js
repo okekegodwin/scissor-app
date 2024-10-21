@@ -10,5 +10,7 @@ router.post("/", controller.shortenUrl);
 router.get("/:code", controller.redirectUrl);
 router.post("/generate-qrcode", controller.generateQrCode);
 router.get("/", controller.getAllUrls);
+router.put("/:id", controller.updateAlias);
+router.delete("/:id", controller.deleteUrl);
 
 module.exports = router

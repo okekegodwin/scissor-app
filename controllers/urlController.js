@@ -31,10 +31,10 @@ async function shortenUrl(req, res) {
         res.status(400);
         res.json({ message: "Custom alias already in use. Please choose another alias." });
       }
-      url = new Url({ longUrl, shortUrl: `${baseUrl}/${customAlias}`})
+      url = new Url({ longUrl, shortUrl: `${baseUrl}/${customAlias}`, customAlias})
     } else {
       const urlCode = shortId.generate();
-      url = new Url({  longUrl, shortUrl: `${baseUrl}/${urlCode}`});
+      url = new Url({  longUrl, shortUrl: `${baseUrl}/${urlCode}`, customAlias});
     }
 
     await url.save();
@@ -110,9 +110,82 @@ async function getAllUrls(req, res) {
 
 }
 
+
+async function updateAlias(req, res) {
+  const id = req.params.id;
+
+  const { newAlias } = req.body;
+
+  if (newAlias === '') {
+    res.status(404).json("Custom alias is required");
+  }
+
+  try {
+    const url = await Url.findById(id);
+
+    if (!url) {
+      return res.status(404).json("ID passed is not found!");
+    }
+
+    const aliasExist = await Url.findOne({ newAlias });
+
+    if (aliasExist) {
+      return res.status(400).json("Alias already exist. Please pass in a new alias");
+    }
+
+    url.customAlias = newAlias;
+    url.shortUrl = `${baseUrl}/${newAlias}`;
+
+    await url.save();
+
+    res.status(200);
+    return res.json({
+      message: "custom alias has been updated successfully",
+      url: url
+    })
+
+  } catch (error) {
+    res.status(500);
+    return res.json({
+      message: "An error occurred",
+      error: error.message
+    })
+  }
+}
+
+
+async function deleteUrl(req, res) {
+  const id = req.params.id;
+
+  try {
+    const url = await Url.findById(id);
+
+    if (!url) {
+      return res.status(404).json("ID not found");
+    }
+
+    await Url.findByIdAndDelete(id);
+
+    res.status(200);
+    return res.json("URL deleted successfully!");
+
+  } catch (error) {
+
+    res.status(500);
+
+    return res.json({
+      message: "An internal error occurred",
+      error: error.message
+    })
+
+  }
+}
+
 module.exports = {
   shortenUrl,
   redirectUrl,
   generateQrCode,
-  getAllUrls
+  getAllUrls,
+  updateAlias,
+  deleteUrl
 }
