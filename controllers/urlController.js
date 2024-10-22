@@ -72,7 +72,7 @@ async function redirectUrl(req, res) {
 
 
 async function generateQrCode(req, res) {
-  const { shortUrl } = req.body
+  const { shortUrl } = req.body;
 
   try {
     const qrCode = await QRCode.toDataURL(shortUrl);
