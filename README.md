@@ -4,6 +4,34 @@ Brief is the new black, this is what inspires the project "Scissor". In today’
 
 
 ## API Documentation
+### Create user
+**URL**: `/auth/register`
+**METHOD**: `POST`
+
+**Request Body**:
+```json
+{
+  "first_name": "James",
+  "last_name": "King",
+  "email": "james23@gmail.com",
+  "password": "jdfk83#jds"
+}
+```
+
+
+### Login user
+**URL**: `/auth/login`
+**METHOD**: `POST`
+
+**Request Body**:
+```json
+{
+  "email": "james23@gmail.com",
+  "password": "jdfk83#jds"
+}
+```
+
+
 ### Shorten URL
 **URL**: `/url`
 **Method**: `POST`
@@ -18,7 +46,7 @@ Brief is the new black, this is what inspires the project "Scissor". In today’
 
 
 ### Redirect URL
-**URL**: `http:localhost:8000/url/queries`
+**URL**: `/url/redirect/:code`
 **Method**: `GET`
 
 
@@ -29,7 +57,7 @@ Brief is the new black, this is what inspires the project "Scissor". In today’
 **Request Body**
 ``` json
 {
-    "shortUrl": "http://localhost:8000/url/devhub"
+    "shortUrl": "http://localhost:8000/devhub"
 }
 ```
 
@@ -46,7 +74,7 @@ Brief is the new black, this is what inspires the project "Scissor". In today’
 **Request Body**:
 ``` json
 {
-  "newAlias": "wiki-wikihomepage"
+  "newAlias": "mongoose-queries"
 }
 ```
 

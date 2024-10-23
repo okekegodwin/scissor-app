@@ -13,6 +13,8 @@ async function shortenUrl(req, res) {
 
   const { longUrl, customAlias } = req.body;
 
+  const userId = req.user.userId;
+
   if (!validUrl.isUri(longUrl)) {
 
     res.status(400);
@@ -30,11 +32,18 @@ async function shortenUrl(req, res) {
       if (existingAlias) {
         res.status(400);
         res.json({ message: "Custom alias already in use. Please choose another alias." });
+      } else {
+
+        url = new Url({ longUrl, shortUrl: `${baseUrl}/${customAlias}`, customAlias, userId});
+
       }
-      url = new Url({ longUrl, shortUrl: `${baseUrl}/${customAlias}`, customAlias})
+
     } else {
+
       const urlCode = shortId.generate();
-      url = new Url({  longUrl, shortUrl: `${baseUrl}/${urlCode}`, customAlias});
+
+      url = new Url({  longUrl, shortUrl: `${baseUrl}/${urlCode}`, customAlias, userId});
+
     }
 
     await url.save();
@@ -42,9 +51,6 @@ async function shortenUrl(req, res) {
 
   } catch (error) {
     res.status(500);
-    res.json({
-      message: error.errmsg
-    })
   }
 }
 
@@ -53,9 +59,17 @@ async function redirectUrl(req, res) {
   
   const { code } = req.params;
 
+   const userId = req.user.userId;
+
   try {
 
-    const url = await Url.findOne({ shortUrl: `${baseUrl}/${code}` }) || await Url.findOne({ customAlias: code });
+    const url = await Url.findOne({
+      $or: [
+        { shortUrl: `${baseUrl}/${code}` },
+        { customAlias: code }
+      ],
+      userId
+    });
     
     if (url) {
       url.clicks += 1;
@@ -74,7 +88,18 @@ async function redirectUrl(req, res) {
 async function generateQrCode(req, res) {
   const { shortUrl } = req.body;
 
+  const userId = req.user.userId;
+
   try {
+    const url = await Url.findOne({
+      shortUrl,
+      userId
+    });
+
+    if (!url) {
+      return res.status(404).json({ message: "URL not found or you do not have access to it" });
+    }
+
     const qrCode = await QRCode.toDataURL(shortUrl);
 
     res.json({ qrCode });
@@ -114,15 +139,18 @@ async function updateAlias(req, res) {
 
   const { newAlias } = req.body;
 
+  const userId = req.user.userId;
+
   if (newAlias === '') {
     res.status(404).json("Custom alias is required");
   }
 
   try {
-    const url = await Url.findById(id);
+
+    const url = await Url.findOne({ _id: id, userId });
 
     if (!url) {
-      return res.status(404).json("ID passed is not found!");
+      return res.status(404).json("ID passed is not found or you do not have access to it!");
     }
 
     const aliasExist = await Url.findOne({ newAlias });
@@ -155,11 +183,13 @@ async function updateAlias(req, res) {
 async function deleteUrl(req, res) {
   const id = req.params.id;
 
+  const userId = req.user.userId;
+
   try {
-    const url = await Url.findById(id);
+    const url = await Url.findOne({ _id: id, userId });
 
     if (!url) {
-      return res.status(404).json("ID not found");
+      return res.status(404).json("ID not found or you do not have access to it");
     }
 
     await Url.findByIdAndDelete(id);

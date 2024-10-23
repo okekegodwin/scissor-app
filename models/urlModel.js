@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const User = require("./userModel");
 
 const Schema = mongoose.Schema;
 
@@ -19,14 +20,16 @@ const urlSchema = new Schema({
     unique: true,
     sparse: true
   },
+
   clicks: {
     type: Number,
     default: 0
   },
+
   createdAt: {
     type: Date,
     default: Date.now
   }
 }) 
 
-module.exports = mongoose.model("url", urlSchema);
+module.exports = mongoose.model("Url", urlSchema);
