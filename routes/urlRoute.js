@@ -11,6 +11,7 @@ router.post("/", verifyToken, controller.shortenUrl);
 router.get("/redirect/:code", verifyToken, controller.redirectUrl);
 router.post("/generate-qrcode", verifyToken, controller.generateQrCode);
 router.get("/", controller.getAllUrls);
+router.get("/:id", controller.getUrlById);
 router.put("/:id", verifyToken, controller.updateAlias);
 router.delete("/:id", verifyToken, controller.deleteUrl);
 

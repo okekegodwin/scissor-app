@@ -67,6 +67,11 @@ Brief is the new black, this is what inspires the project "Scissor". In today’
 **Method**: `GET`
 
 
+### Get url by ID
+**URL**: `/url/:id`
+**Method**: `GET`
+
+
 ### Update URL by ID using custom-alias
 **URL**: `/url/id`
 **Method**: `PUT`
@@ -80,5 +85,5 @@ Brief is the new black, this is what inspires the project "Scissor". In today’
 
 
 ### Delete URL by ID
-**URL**: `/url/id`
+**URL**: `/url/:id`
 **Method**: `DELETE`

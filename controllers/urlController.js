@@ -134,6 +134,28 @@ async function getAllUrls(req, res) {
 }
 
 
+async function getUrlById(req, res) {
+  const { id } = req.params;
+  console.log(id);
+
+  try {
+    const url = await Url.findOne({ _id: id });
+    console.log(url);
+
+    if (!url) {
+      return res.status(404).json("user with id not found");
+    } else {
+      return res.status(200).json({ url });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      message: "an error occurred",
+      error: error.message
+    });
+  }
+}
+
+
 async function updateAlias(req, res) {
   const id = req.params.id;
 
@@ -214,6 +236,7 @@ module.exports = {
   redirectUrl,
   generateQrCode,
   getAllUrls,
+  getUrlById,
   updateAlias,
   deleteUrl
 }
